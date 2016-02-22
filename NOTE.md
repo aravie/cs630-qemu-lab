@@ -4,9 +4,9 @@
 
 ### Compile manydot.s on 64bit hosts
 
-    $ as --32 resources/manydots.s -o resources/manydots.o
-    $ ld -m elf_i386 resources/manydots.o -o resources/manydots
-    $ ./resources/manydots 
+    $ as --32 res/manydots.s -o res/manydots.o
+    $ ld -m elf_i386 res/manydots.o -o res/manydots
+    $ ./res/manydots
     How many dots do you want to see? 10
     ..........
     $
@@ -15,15 +15,15 @@
 
 - hello.s
 
-        $ as --32 resources/hello.s -o resources/hello.o 
-        $ ld -m elf_i386 resources/hello.o -o resources/hello
-        $ resources/hello
+        $ as --32 res/hello.s -o res/hello.o
+        $ ld -m elf_i386 res/hello.o -o res/hello
+        $ res/hello
 
 - hello.s + try32bit.s:
 
-        $ ./configure resources/try32bit.s 
+        $ ./configure res/try32bit.s
         $ make
-        $ dd if=resources/hello.o of=pmboot.img seek=13
+        $ dd if=res/hello.o of=pmboot.img seek=13
         $ make pmboot
 
 ### Compile loadmap.cpp in gentoo 64bit
