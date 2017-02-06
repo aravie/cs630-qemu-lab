@@ -4,6 +4,7 @@ OBJCOPY   = objcopy
 ENTRY     = __start
 LDFILE    = src/bootloader_x86.ld
 QUICKLOAD = src/quikload_floppy.s
+DEF_SRC   = src/rtc.s
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 all: clean boot.img pmboot.img
@@ -17,6 +18,7 @@ boot.img: boot.bin
 #	@dd if=/dev/zero of=boot.img skip=1 seek=1 bs=512 count=2879
 
 boot.bin:
+	@if [ ! -f boot.S ]; then ./configure $(DEF_SRC); fi
 	@$(CC) -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
