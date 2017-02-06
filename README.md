@@ -15,7 +15,9 @@ Localhost:
 Docker:
 
     $ tools/install-docker-lab.sh
+
     $ tools/update-lab-uid.sh
+    $ tools/update-lab-identify.sh
     $ tools/run-docker-lab.sh
 
 ## Update

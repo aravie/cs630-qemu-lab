@@ -1,10 +1,10 @@
-CC=gcc -m32
-LD=ld -melf_i386
-OBJCOPY=objcopy
-ENTRY=__start
-LDFILE=src/bootloader_x86.ld
-QUICKLOAD=src/quikload_floppy.s
-CS630=http://www.cs.usfca.edu/~cruse/cs630f06/
+CC        = gcc -m32
+LD        = ld -melf_i386
+OBJCOPY   = objcopy
+ENTRY     = __start
+LDFILE    = src/bootloader_x86.ld
+QUICKLOAD = src/quikload_floppy.s
+CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 all: clean boot.img pmboot.img
 
