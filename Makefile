@@ -1,4 +1,4 @@
-CC        = gcc -m32
+CC        = gcc -g -m32
 LD        = ld -melf_i386
 OBJCOPY   = objcopy
 ENTRY     = __start
@@ -61,6 +61,8 @@ help:
 	@echo "    :: Compile and Boot ::"
 	@echo ""
 	@echo "    make boot                    -- For Real mode"
+	@echo "    make boot G=0                -- For Real mode, Curses based output, for ssh like console"
+	@echo "    make boot D=1                -- For Real mode, for debugging with gdb"
 	@echo "    make pmboot                  -- For Protected mode"
 	@echo ""
 	@echo "    :: Notes ::"
