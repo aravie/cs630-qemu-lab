@@ -19,6 +19,10 @@ to execute the following command to mirror the resources in the course site to `
 
     $ make update
 
+**Note**: If the above command fails, please use the backup files in the 'resources' branch:
+
+    $ git checkout resources
+
 ## Usage
 
 Our project allows to:
