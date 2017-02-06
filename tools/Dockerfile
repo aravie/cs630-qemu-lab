@@ -32,7 +32,6 @@ ADD lab-name /
 ADD supervisord.conf /etc/supervisor/conf.d/
 
 ADD startup.sh /
-ADD entrypoint.sh /
 
 WORKDIR /cs630-qemu-lab/
 
@@ -40,4 +39,4 @@ EXPOSE 6080
 EXPOSE 5900
 EXPOSE 22
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/startup.sh"]
