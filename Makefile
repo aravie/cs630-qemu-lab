@@ -51,7 +51,6 @@ help:
 	@echo "    :: Download ::"
 	@echo ""
 	@echo "    make update                  -- download the latest resources for the course"
-	@echo "    git checkout resources       -- checkout the backup of the resources"
 	@echo ""
 	@echo "    :: Configuration ::"
 	@echo ""

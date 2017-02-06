@@ -34,6 +34,7 @@ RUN chmod 440 /etc/sudoers.d/ubuntu
 # Add shortcuts on Desktop
 ADD lab.desktop /
 ADD help.desktop /
+ADD demo.desktop /
 
 # Add lab-name
 ADD lab-name /
