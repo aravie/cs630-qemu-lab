@@ -40,3 +40,32 @@ clean:
 
 distclean: clean
 	@rm -rf boot.S
+
+
+note:
+	@cat NOTE.md
+
+help:
+	@echo "--------------------Assembly Course (CS630) Lab---------------------"
+	@echo ""
+	@echo "    :: Download ::"
+	@echo ""
+	@echo "    make update                  -- download the latest resources for the course"
+	@echo "    git checkout resources       -- checkout the backup of the resources"
+	@echo ""
+	@echo "    :: Configuration ::"
+	@echo ""
+	@echo "    ./configure src/helloworld.s -- configure the source want to compile"
+	@echo "    ./configure res/rtcdemo.s    -- configure the sources in res/"
+	@echo "    ./configure src/pmrtc.s      -- configure the sources with protected mode"
+	@echo ""
+	@echo "    :: Compile and Boot ::"
+	@echo ""
+	@echo "    make boot                    -- For Real mode"
+	@echo "    make pmboot                  -- For Protected mode"
+	@echo ""
+	@echo "    :: Notes ::"
+	@echo ""
+	@echo "    make note"
+	@echo ""
+	@echo "--------------------------------------------------------------------"
