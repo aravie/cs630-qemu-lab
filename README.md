@@ -1,37 +1,38 @@
-# CS630 on Qemu(a virtual machine) in Ubuntu
+# CS630 on Qemu in Ubuntu
 
 - Author: Wu Zhangjin/Falcon <wuzhangjin@gmail.com> of [TinyLab.org](http://tinylab.org)
-- Update: 2008-09-16, 2014/03/16
+- Update: 2008-09-16, 2014/03/16, 2016/08/04
 - Home: <http://www.tinylab.org/cs630-qemu-lab/>
 - Repo: <http://github.com/tinyclub/cs630-qemu-lab.git>
+- CS630: <http://www.cs.usfca.edu/~cruse/cs630f06/>
 
 ## Prepare
 
-If want to do the following exercises, PLEASE install
-[Qemu](http://wiki.qemu.org/Main_Page) and some other related tools in
-Ubuntu/Linux system.
+Localhost:
 
-    $ sudo apt-get install qemu build-essential
+    $ tools/install-local-lab.sh
 
-If want to do the exercises of
-[CS630](http://www.cs.usfca.edu/~cruse/cs630f06/) on Qemu in Ubuntu, need
-to execute the following command to mirror the resources in the course site to `res/`:
+Docker:
+
+    $ tools/install-docker-lab.sh
+    $ tools/update-lab-uid.sh
+    $ tools/run-docker-lab.sh
+
+## Update
+
+A backup of the cs630 exercises has been downloaded in `res/`, update it with:
 
     $ make update
 
-**Note**: If the above command fails, please use the backup files in the 'resources' branch:
-
-    $ git checkout resources
-
 ## Usage
 
-Our project allows to:
+Bascially, please type:
 
-- Specify an assembly file for compiling with `./configure /path/to/file.s`
-- Compile and run the assembly in **real mode** with `make boot`
-- Compile and run the assembly in **protected mode** with `make pmboot`
+    $ make help
 
-For example, to compile the src/helloworld.s, we can configure it with:
+### Configure a source
+
+For example, to compile the src/helloworld.s, configure it with:
 
     $ ./configure src/helloworld.s
 
@@ -40,7 +41,12 @@ type:
 
     $ ./configure res/rtcdemo.s
 
-### **Real mode** exercise
+### Compile and Boot
+
+Some examples can be compiled for **Real mode**, some others need to be
+compiled for **Protected mode**.
+
+#### **Real mode** exercise
 
 - helloworld
 
@@ -52,7 +58,7 @@ type:
         $ ./configure src/rtc.s
         $ make boot
 
-### **Protected mode** exercise
+#### **Protected mode** exercise
 
 - helloworld
 
@@ -64,11 +70,13 @@ type:
         $ ./configure src/pmrtc.s
         $ make pmboot
 
-## NOTE
+## NOTES
 
 In fact, some exercises not about "protected mode" also need to use the
 2nd method to compile, for they begin execution with `CS:IP = 1000:0002`, and
 need a "bootloader" to load them, or their size are more than 512 bytes, can
 not be put in the first 512bytes of the disk (MBR).
 
-See more notes from NOTE.md.
+See more notes from NOTE.md:
+
+    $ make note
