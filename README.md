@@ -17,7 +17,6 @@
     or
     $ tools/docker/pull         # Pull from docker hub
 
-    $ tools/docker/uid
     $ tools/docker/identify
     $ tools/docker/run
 
