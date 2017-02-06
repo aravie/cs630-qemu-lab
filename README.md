@@ -51,6 +51,11 @@ type:
 Some examples can be compiled for **Real mode**, some others need to be
 compiled for **Protected mode**.
 
+To boot with curses based graphic (console friendly), please pass 'G=0' to
+make, exit with 'ESC+2' to Qemu monitor console and the 'quit' command.
+
+    $ make boot G=0
+
 #### **Real mode** exercise
 
 - helloworld

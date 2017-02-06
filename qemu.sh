@@ -3,4 +3,7 @@
 [ -z "$1" ] && exit -1
 
 image="$1".img
-qemu-system-i386 -m 129M -fda $image -boot a
+
+[ -n "$G" -a "$G" == "0" ] && CURSES=-curses
+
+qemu-system-i386 $CURSES -m 129M -fda $image -boot a
