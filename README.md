@@ -11,7 +11,7 @@ If want to do the following exercises, PLEASE install
 [Qemu](http://wiki.qemu.org/Main_Page) and some other related tools in
 Ubuntu/Linux system.
 
-    $ sudo apt-get install qemu
+    $ sudo apt-get install qemu build-essential
 
 If want to do the exercises of
 [CS630](http://www.cs.usfca.edu/~cruse/cs630f06/) on Qemu in Ubuntu, need
