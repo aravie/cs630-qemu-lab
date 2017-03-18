@@ -57,7 +57,7 @@ help:
 	@echo "    :: Configuration ::"
 	@echo ""
 	@echo "    ./configure src/helloworld.s -- configure the source want to compile"
-	@echo "    ./configure res/rtcdemo.s    -- configure the sources in res/"
+	@echo "    ./configure src/rtc.s        -- configure the sources with real mode"
 	@echo "    ./configure src/pmrtc.s      -- configure the sources with protected mode"
 	@echo ""
 	@echo "    :: Compile and Boot ::"
