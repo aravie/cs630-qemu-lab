@@ -6,7 +6,7 @@
 - Repo: <http://github.com/tinyclub/cs630-qemu-lab.git>
 - CS630: <http://www.cs.usfca.edu/~cruse/cs630f06/>
 
-[![CS630 Qemu Lab Usage](doc/cs630-qemu-pmrtc.png)](https://showdesk.github.io/2017-03-18-15-21-20-cs630-qemu-lab-usage-00-03-33/)
+[![CS630 Qemu Lab Usage](doc/cs630-qemu-pmrtc.png)](http://showdesk.io/2017-03-18-15-21-20-cs630-qemu-lab-usage-00-03-33/)
 
 ## Prepare
 
