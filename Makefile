@@ -20,10 +20,14 @@ boot.img: boot.bin
 	@dd if=boot.bin of=boot.img bs=512 count=1
 #	@dd if=/dev/zero of=boot.img skip=1 seek=1 bs=512 count=2879
 
+ifneq ($(SRC),)
+  S = $(SRC)
+endif
+
 boot.bin:
 	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
-ifneq ($(SRC),)
-	$(CONFIGURE) $(SRC)
+ifneq ($(S),)
+	$(CONFIGURE) $(S)
 endif
 	@$(CC) -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
@@ -75,7 +79,8 @@ help:
 	@echo ""
 	@echo "    :: Configure, Compile and Boot ::"
 	@echo ""
-	@echo "    make boot SRC=src/rtc.s      -- For Real mode"
+	@echo "    make boot SRC=src/rtc.s      -- Specify the source directly with SRC"
+	@echo "    make boot   S=src/rtc.s      -- Specify the source directly with S"
 	@echo ""
 	@echo "    :: Notes ::"
 	@echo ""
