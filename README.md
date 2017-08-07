@@ -60,7 +60,7 @@ make, exit with 'ESC' + '2' to Qemu monitor console and the 'quit' command.
 Or with `SRC` to configure together:
 
     $ make boot SRC=src/rtc.s
-    $ make pmboot SRC=res/rtcdemo.s
+    $ make pmboot SRC=res/rtcdemo.s // make boot PM=1 SRC=res/rtcdemo.s
 
 Or
 

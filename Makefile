@@ -41,11 +41,20 @@ quickload.bin:
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
-boot: clean boot.img
+defboot: clean boot.img
 	@bash qemu.sh boot
 
 pmboot: clean pmboot.img
 	@bash qemu.sh pmboot
+
+P = $(PM)
+
+boot:
+ifneq ($(P), 1)
+	@make defboot
+else
+	@make pmboot
+endif
 
 clean:
 	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.img pmboot.img
@@ -76,6 +85,8 @@ help:
 	@echo "    make boot G=0                -- For Real mode, Curses based output, for ssh like console"
 	@echo "    make boot D=1                -- For Real mode, for debugging with gdb"
 	@echo "    make pmboot                  -- For Protected mode"
+	@echo "    make boot P=1                -- For Protected mode, the same as above"
+	@echo "    make boot PM=1               -- For Protected mode, the same as above"
 	@echo ""
 	@echo "    :: Configure, Compile and Boot ::"
 	@echo ""
