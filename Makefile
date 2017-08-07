@@ -2,9 +2,12 @@ CC        = gcc -g -m32
 LD        = ld -melf_i386
 OBJCOPY   = objcopy
 ENTRY     = __start
-LDFILE    = src/bootloader_x86.ld
-QUICKLOAD = src/quikload_floppy.s
-DEF_SRC   = src/rtc.s
+
+TOP_DIR   = $(CURDIR)
+LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
+QUICKLOAD = $(TOP_DIR)/src/quikload_floppy.s
+DEF_SRC   = $(TOP_DIR)/src/rtc.s
+CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 all: clean boot.img pmboot.img
@@ -18,7 +21,10 @@ boot.img: boot.bin
 #	@dd if=/dev/zero of=boot.img skip=1 seek=1 bs=512 count=2879
 
 boot.bin:
-	@if [ ! -f boot.S ]; then ./configure $(DEF_SRC); fi
+	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
+ifneq ($(SRC),)
+	$(CONFIGURE) $(SRC)
+endif
 	@$(CC) -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
@@ -66,6 +72,10 @@ help:
 	@echo "    make boot G=0                -- For Real mode, Curses based output, for ssh like console"
 	@echo "    make boot D=1                -- For Real mode, for debugging with gdb"
 	@echo "    make pmboot                  -- For Protected mode"
+	@echo ""
+	@echo "    :: Configure, Compile and Boot ::"
+	@echo ""
+	@echo "    make boot SRC=src/rtc.s      -- For Real mode"
 	@echo ""
 	@echo "    :: Notes ::"
 	@echo ""

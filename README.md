@@ -57,6 +57,11 @@ make, exit with 'ESC' + '2' to Qemu monitor console and the 'quit' command.
 
     $ make boot G=0
 
+Or with `SRC` to configure together:
+
+    $ make boot G=0 SRC=src/rtc.s
+    $ make pmboot G=0 SRC=res/rtcdemo.s
+
 To debug with it, in one terminal:
 
     $ make boot D=1
@@ -73,25 +78,21 @@ In another:
 
 - helloworld
 
-        $ ./configure src/helloworld.s
-        $ make boot
+        $ make boot SRC=src/helloworld.s
 
 - rtc
 
-        $ ./configure src/rtc.s
-        $ make boot
+        $ make boot SRC=src/rtc.s
 
 #### **Protected mode** exercise
 
 - helloworld
 
-        $ ./configure src/pmhello.s
-        $ make pmboot
+        $ make pmboot SRC=src/pmhello.s
 
 - rtc
 
-        $ ./configure src/pmrtc.s
-        $ make pmboot
+        $ make pmboot SRC=src/pmrtc.s
 
 ## NOTES
 
