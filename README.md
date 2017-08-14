@@ -14,11 +14,7 @@
 
     $ cd cloud-lab/ && tools/docker/choose cs630-qemu-lab
 
-
-    $ tools/docker/build        # Build ourselves
-    or
     $ tools/docker/pull         # Pull from docker hub
-
     $ tools/docker/run
 
 Login the noVNC website with the printed password and launch the lab via the
