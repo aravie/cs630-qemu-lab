@@ -29,7 +29,7 @@ boot.bin:
 ifneq ($(S),)
 	$(CONFIGURE) $(S)
 endif
-	@$(CC) -c boot.S
+	@$(CC) -g -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
@@ -40,6 +40,18 @@ quickload.bin:
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
+
+# Debugging support
+ELF_SYM ?= $(TOP_DIR)/boot.elf
+GDB_CMD ?= gdb --quiet $(ELF_SYM)
+XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
+
+gdbinit:
+	@echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
+
+debug: gdbinit
+	@$(XTERM_CMD) &
+	@make -s boot D=1
 
 defboot: clean boot.img
 	@bash qemu.sh boot

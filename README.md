@@ -63,17 +63,11 @@ Or
     $ make boot S=src/rtc.s
     $ make pmboot S=res/rtcdemo.s
 
-To debug with it, in one terminal:
+To debug with it:
 
-    $ make boot D=1
+    $ make debug
 
-In another:
-
-    $ gdb boot.o
-    (gdb) target remote :1234
-    (gdb) b start
-    (gdb) b getRTC
-    (gdb) b printTime
+Modify `.gdbinit` to customize your own auto-load gdb scripts.
 
 #### **Real mode** exercise
 
