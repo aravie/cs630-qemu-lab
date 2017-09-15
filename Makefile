@@ -69,7 +69,7 @@ else
 endif
 
 clean:
-	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.img pmboot.img
+	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.sym boot.img pmboot.img
 
 distclean: clean
 	@rm -rf boot.S
