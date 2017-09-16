@@ -44,15 +44,15 @@ update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
-ELF_SYM ?= $(TOP_DIR)/quickload.elf
-GDB_CMD ?= gdb --quiet $(ELF_SYM)
+DST ?= $(TOP_DIR)/quickload.elf
+GDB_CMD ?= gdb --quiet $(DST)
 XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
 
 gdbinit:
 	@echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
 
 debug: gdbinit
-ifeq ($(findstring boot.elf,$(ELF_SYM)),boot.elf)
+ifeq ($(findstring boot.elf,$(DST)),boot.elf)
 	@-patch -s -r- -N -l -p1 < $(DEBUG_PATCH)
 endif
 	@$(XTERM_CMD) &

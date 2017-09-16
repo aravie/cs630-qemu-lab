@@ -60,7 +60,9 @@ Or with `SRC` to configure together:
 To debug with it:
 
     $ make debug
-    $ make debug ELF_SYM=boot.elf
+
+    $ make debug SRC=src/helloworld.s DST=boot.elf
+    $ make debug SRC=src/rtc.s DST=boot.elf
 
 Modify `.gdbinit` to customize your own auto-load gdb scripts.
 
