@@ -60,8 +60,12 @@ Or with `SRC` to configure together:
 To debug with it:
 
     $ make debug
+    $ make debug ELF_SYM=boot.elf
 
 Modify `.gdbinit` to customize your own auto-load gdb scripts.
+
+Note: due to linking issue, debug not work with protected mode assembly
+currently, need to be fixed up later.
 
 #### **Real mode** exercise
 
