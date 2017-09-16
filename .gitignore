@@ -3,4 +3,6 @@ boot.S
 *.bin
 *.elf
 *.img
+*.rej
+*.orig
 .lab*

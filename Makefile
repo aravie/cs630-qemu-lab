@@ -1,5 +1,4 @@
 AS        = as -g --32
-#LD        = ld -melf_i386
 LD        = ld -r -melf_i386
 CC        = gcc -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
 OBJCOPY   = objcopy
@@ -33,7 +32,6 @@ config: $(DEF_SRC) $(SRC)
 boot.bin: config
 	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
 	@$(AS) -o boot.o boot.S
-	#@$(LD) boot.o -o boot.elf -Ttext 0 #-e $(LOAD_ENTRY)
 	@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
@@ -55,7 +53,7 @@ gdbinit:
 
 debug: gdbinit
 ifeq ($(findstring boot.elf,$(ELF_SYM)),boot.elf)
-	@patch -p1 < $(DEBUG_PATCH)
+	@-patch -s -r- -N -l -p1 < $(DEBUG_PATCH)
 endif
 	@$(XTERM_CMD) &
 	@make -s boot D=1
@@ -90,6 +88,7 @@ help:
 	@echo "    :: Configuration ::"
 	@echo ""
 	@echo "    ./configure src/helloworld.s -- configure the source want to compile"
+	@echo "    ./configure src/pmhello.s    -- configure the hello with protected mode"
 	@echo "    ./configure src/rtc.s        -- configure the sources with real mode"
 	@echo "    ./configure src/pmrtc.s      -- configure the sources with protected mode"
 	@echo ""
