@@ -20,7 +20,20 @@
 #------------------------------------------------------------------
 	ljmp	$0x07C0, $main		# re-normalize CS and IP
 #------------------------------------------------------------------
-main:	# setup segment-registers to address our program data	
+main:
+	# clear the screen
+	#mov $0xA000, %ax
+	mov $0xB800, %ax
+	mov %ax, %es
+	xor %di, %di
+	xor %ax, %ax
+	#mov $32000, %cx
+	mov $2000, %cx
+	cld
+	rep stosw
+
+
+	# setup segment-registers to address our program data
 	mov	%cs, %ax
 	mov	%ax, %ds
 	mov	%ax, %es
@@ -30,7 +43,7 @@ main:	# setup segment-registers to address our program data
 	mov     %ax, %es
 	mov     $0, %bx
         mov     $1, %ax
-	mov     $2879, %cl
+	mov     $0x80, %cl
 	call    ReadSector
 
 	# verify that our program's signature-word is present
