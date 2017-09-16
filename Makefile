@@ -1,21 +1,23 @@
 AS        = as -g --32
-CC        = gcc -g -m32
-#LD        = ld -r -melf_i386
-LD        = ld -melf_i386
-MEM      ?= 129M
+#LD        = ld -melf_i386
+LD        = ld -r -melf_i386
+CC        = gcc -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
 OBJCOPY   = objcopy
+
+MEM      ?= 129M
 BOOT_ENTRY= main
 LOAD_ENTRY= start
 LOAD_ADDR = 0x1000
 BOOT_ADDR = 0x7C00
 _LOAD_ADDR= 0x07C0
+
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
 QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 CONFIGURE = $(TOP_DIR)/configure
-CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 IMAGE    ?= $(TOP_DIR)/boot.img
+CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 all: clean boot.img
 
@@ -30,8 +32,8 @@ config: $(DEF_SRC) $(SRC)
 boot.bin: config
 	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
 	@$(AS) -o boot.o boot.S
-	@$(LD) boot.o -o boot.elf -Ttext 0 #-e $(LOAD_ENTRY)
-	#@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
+	#@$(LD) boot.o -o boot.elf -Ttext 0 #-e $(LOAD_ENTRY)
+	@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
