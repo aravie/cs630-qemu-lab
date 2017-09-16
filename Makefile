@@ -1,3 +1,4 @@
+AS        = as -g --32
 CC        = gcc -g -m32
 LD        = ld -melf_i386
 OBJCOPY   = objcopy
@@ -24,12 +25,12 @@ config: $(DEF_SRC) $(SRC)
 
 boot.bin: config
 	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
-	@$(CC) -c boot.S
+	@$(AS) -o boot.o boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
-	@$(CC) -c $(QUICKLOAD) -o quickload.o
+	@$(AS) $(QUICKLOAD) -o quickload.o
 	@$(LD) quickload.o -o quickload.elf -T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
 
