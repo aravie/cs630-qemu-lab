@@ -18,7 +18,7 @@
 	.code16
 	.text
 #------------------------------------------------------------------
-	ljmp	$0x07C0, $main		# re-normalize CS and IP
+#	ljmp	$0x07C0, $main		# re-normalize CS and IP
 #------------------------------------------------------------------
 main:
 	# clear the screen

@@ -1,4 +1,8 @@
 target remote :1234
-b start
-si
+b main
+b ReadSector
+c
 l
+c
+l
+bt

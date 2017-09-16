@@ -1,6 +1,7 @@
 AS        = as -g --32
 CC        = gcc -g -m32
 LD        = ld -melf_i386
+MEM      ?= 129M
 OBJCOPY   = objcopy
 ENTRY     = __start
 SEG_PROG1 = 0x07C0
@@ -26,19 +27,19 @@ config: $(DEF_SRC) $(SRC)
 boot.bin: config
 	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
 	@$(AS) -o boot.o boot.S
-	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
+	@$(LD) boot.o -o boot.elf -Ttext 0 #-T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
 	@$(AS) $(QUICKLOAD) -o quickload.o
-	@$(LD) quickload.o -o quickload.elf -T$(LDFILE) #-e $(ENTRY)
+	@$(LD) quickload.o -o quickload.elf -Ttext 0x7C00 #-T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
-ELF_SYM ?= $(TOP_DIR)/boot.elf
+ELF_SYM ?= $(TOP_DIR)/quickload.elf
 GDB_CMD ?= gdb --quiet $(ELF_SYM)
 XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
 
@@ -53,8 +54,6 @@ DEBUG = $(if $D, -s -S)
 ifeq ($G,0)
    CURSES=-curses
 endif
-
-MEM ?= 129M
 
 boot: clean boot.img
 	qemu-system-i386 -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
