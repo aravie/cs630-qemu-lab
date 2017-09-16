@@ -3,7 +3,10 @@ CC        = gcc -g -m32
 LD        = ld -melf_i386
 MEM      ?= 129M
 OBJCOPY   = objcopy
-ENTRY     = __start
+ENTRY     = start
+LOAD_ENTRY= main
+ADDR      = 0x0
+LOAD_ADDR = 0x7C00
 SEG_PROG1 = 0x07C0
 SEG_PROG2 = 0x1000
 TOP_DIR   = $(CURDIR)
@@ -27,12 +30,12 @@ config: $(DEF_SRC) $(SRC)
 boot.bin: config
 	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
 	@$(AS) -o boot.o boot.S
-	@$(LD) boot.o -o boot.elf -Ttext 0 #-T$(LDFILE) #-e $(ENTRY)
+	@$(LD) boot.o -o boot.elf -Ttext $(ADDR) -e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
 	@$(AS) $(QUICKLOAD) -o quickload.o
-	@$(LD) quickload.o -o quickload.elf -Ttext 0x7C00 #-T$(LDFILE) #-e $(ENTRY)
+	@$(LD) quickload.o -o quickload.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
 
 update:
