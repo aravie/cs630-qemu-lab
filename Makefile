@@ -24,7 +24,7 @@ config: $(DEF_SRC) $(SRC)
 
 boot.bin: config
 	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
-	@$(CC) -g -c boot.S
+	@$(CC) -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
@@ -56,7 +56,7 @@ endif
 MEM ?= 129M
 
 boot: clean boot.img
-	qemu-system-i386 $(CURSES) $(DEBUG) -m $(MEM) -fda $(IMAGE) -boot a
+	qemu-system-i386 -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
 
 pmboot: boot
 
