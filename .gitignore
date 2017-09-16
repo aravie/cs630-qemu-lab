@@ -1,9 +1,6 @@
 boot.S
-boot.bin
-boot.elf
-boot.sym
-boot.o
-boot.img
-pmboot.img
-quickload.bin
+*.o
+*.bin
+*.elf
+*.img
 .lab*

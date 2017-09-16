@@ -47,11 +47,11 @@ main:
 	call    ReadSector
 
 	# verify that our program's signature-word is present
-	cmpw	$0xABCD, %es:0
-	jne	err
+	#cmpw	$0xABCD, %es:0
+	#jne	err
 
 	# transfer control to our program's entry-point
-	lcall	$0x1000, $0x0002
+	lcall	$0x1000, $0x0000
 
 fin:	# await keypress, then reboot
 	mov	$0x00, %ah

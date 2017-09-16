@@ -2,39 +2,36 @@ CC        = gcc -g -m32
 LD        = ld -melf_i386
 OBJCOPY   = objcopy
 ENTRY     = __start
-
+SEG_PROG1 = 0x07C0
+SEG_PROG2 = 0x1000
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
-QUICKLOAD1= $(TOP_DIR)/src/_quickload_floppy.s
-QUICKLOAD2= $(TOP_DIR)/src/quickload_floppy.s
-QUICKLOAD = $(QUICKLOAD1)
+QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
+IMAGE    ?= $(TOP_DIR)/boot.img
 
 all: clean boot.img
 
-pmboot.img: boot.bin
-	@make quickload.bin QUICKLOAD=$(QUICKLOAD2)
-	@dd if=quickload.bin of=boot.img bs=512 count=1
-	@dd if=boot.bin of=boot.img seek=1 bs=512 count=2879
-
-boot.img: boot.bin
-	@dd if=boot.bin of=boot.img bs=512 count=1
+boot.img: boot.bin quickload.bin
+	@dd if=quickload.bin of=$(IMAGE) bs=512 count=1
+	@dd if=boot.bin of=$(IMAGE) seek=1 bs=512 count=2879
 
 config: $(DEF_SRC) $(SRC)
 	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
 	@$(if $(SRC), $(CONFIGURE) $(SRC))
 
 boot.bin: config
+	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
 	@$(CC) -g -c boot.S
 	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
-	$(CC) -c $(QUICKLOAD) -o boot.o
-	$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
-	$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf quickload.bin
+	@$(CC) -c $(QUICKLOAD) -o quickload.o
+	@$(LD) quickload.o -o quickload.elf -T$(LDFILE) #-e $(ENTRY)
+	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
@@ -51,18 +48,20 @@ debug: gdbinit
 	@$(XTERM_CMD) &
 	@make -s boot D=1
 
-defboot: clean boot.img
-	@bash qemu.sh
+DEBUG = $(if $D, -s -S)
+ifeq ($G,0)
+   CURSES=-curses
+endif
 
-pmboot: clean pmboot.img
-	@bash qemu.sh
+MEM ?= 129M
 
-P ?= $(PM)
-boot:
-	@make $(if $P, pmboot, defboot)
+boot: clean boot.img
+	qemu-system-i386 $(CURSES) $(DEBUG) -m $(MEM) -fda $(IMAGE) -boot a
+
+pmboot: boot
 
 clean:
-	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.sym boot.img
+	@rm -rf *.bin *.elf *.o $(IMAGE)
 
 distclean: clean
 	@rm -rf boot.S

@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ln -sf $1 boot.S 
+#ln -sf $1 boot.S
+cp $1 boot.S
