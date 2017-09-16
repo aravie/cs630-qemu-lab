@@ -15,6 +15,7 @@ TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
 QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
+DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
 CONFIGURE = $(TOP_DIR)/configure
 IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
@@ -53,6 +54,9 @@ gdbinit:
 	@echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
 
 debug: gdbinit
+ifeq ($(findstring boot.elf,$(ELF_SYM)),boot.elf)
+	@patch -p1 < $(DEBUG_PATCH)
+endif
 	@$(XTERM_CMD) &
 	@make -s boot D=1
 
