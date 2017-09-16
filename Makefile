@@ -1,14 +1,14 @@
 AS        = as -g --32
 CC        = gcc -g -m32
+#LD        = ld -r -melf_i386
 LD        = ld -melf_i386
 MEM      ?= 129M
 OBJCOPY   = objcopy
-ENTRY     = start
-LOAD_ENTRY= main
-ADDR      = 0x0
-LOAD_ADDR = 0x7C00
-SEG_PROG1 = 0x07C0
-SEG_PROG2 = 0x1000
+BOOT_ENTRY= main
+LOAD_ENTRY= start
+LOAD_ADDR = 0x1000
+BOOT_ADDR = 0x7C00
+_LOAD_ADDR= 0x07C0
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
 QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
@@ -28,14 +28,15 @@ config: $(DEF_SRC) $(SRC)
 	@$(if $(SRC), $(CONFIGURE) $(SRC))
 
 boot.bin: config
-	@sed -i -e "s%$(SEG_PROG1)%$(SEG_PROG2)%g" boot.S
+	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
 	@$(AS) -o boot.o boot.S
-	@$(LD) boot.o -o boot.elf -Ttext $(ADDR) -e $(ENTRY)
+	@$(LD) boot.o -o boot.elf -Ttext 0 #-e $(LOAD_ENTRY)
+	#@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
-	@$(AS) $(QUICKLOAD) -o quickload.o
-	@$(LD) quickload.o -o quickload.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
+	@$(AS) --defsym LOAD_ADDR=$(LOAD_ADDR) $(QUICKLOAD) -o quickload.o
+	@$(LD) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
 
 update:

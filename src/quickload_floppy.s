@@ -15,6 +15,7 @@
 //      modifiedby: falcon <wuzhangjin@gmail.com>, 2008-09-16
 //-----------------------------------------------------------------
 
+	.global main
 	.code16
 	.text
 #------------------------------------------------------------------
@@ -39,7 +40,7 @@ main:
 	mov	%ax, %es
 
 	# transfer sectors from disk to memory
-	mov     $0x1000, %ax
+	mov     $LOAD_ADDR, %ax
 	mov     %ax, %es
 	mov     $0, %bx
         mov     $1, %ax
@@ -51,7 +52,7 @@ main:
 	#jne	err
 
 	# transfer control to our program's entry-point
-	lcall	$0x1000, $0x0000
+	lcall	$LOAD_ADDR, $0x0000
 
 fin:	# await keypress, then reboot
 	mov	$0x00, %ah
