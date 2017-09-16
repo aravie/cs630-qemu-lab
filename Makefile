@@ -5,38 +5,36 @@ ENTRY     = __start
 
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
-QUICKLOAD = $(TOP_DIR)/src/quikload_floppy.s
+QUICKLOAD1= $(TOP_DIR)/src/_quickload_floppy.s
+QUICKLOAD2= $(TOP_DIR)/src/quickload_floppy.s
+QUICKLOAD = $(QUICKLOAD1)
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
-all: clean boot.img pmboot.img
+all: clean boot.img
 
-pmboot.img: boot.bin quickload.bin
-	@dd if=quickload.bin of=pmboot.img bs=512 count=1
-	@dd if=boot.bin of=pmboot.img seek=1 bs=512 count=2879
+pmboot.img: boot.bin
+	@make quickload.bin QUICKLOAD=$(QUICKLOAD2)
+	@dd if=quickload.bin of=boot.img bs=512 count=1
+	@dd if=boot.bin of=boot.img seek=1 bs=512 count=2879
 
 boot.img: boot.bin
 	@dd if=boot.bin of=boot.img bs=512 count=1
-#	@dd if=/dev/zero of=boot.img skip=1 seek=1 bs=512 count=2879
 
-ifneq ($(SRC),)
-  S = $(SRC)
-endif
-
-boot.bin:
+config: $(DEF_SRC) $(SRC)
 	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
-ifneq ($(S),)
-	$(CONFIGURE) $(S)
-endif
+	@$(if $(SRC), $(CONFIGURE) $(SRC))
+
+boot.bin: config
 	@$(CC) -g -c boot.S
-	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
+	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
 	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
 
 quickload.bin:
-	@$(CC) -c $(QUICKLOAD) -o boot.o
-	@$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY) 
-	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf quickload.bin
+	$(CC) -c $(QUICKLOAD) -o boot.o
+	$(LD) boot.o -o boot.elf -T$(LDFILE) #-e $(ENTRY)
+	$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf quickload.bin
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
@@ -54,22 +52,17 @@ debug: gdbinit
 	@make -s boot D=1
 
 defboot: clean boot.img
-	@bash qemu.sh boot
+	@bash qemu.sh
 
 pmboot: clean pmboot.img
-	@bash qemu.sh pmboot
+	@bash qemu.sh
 
-P = $(PM)
-
+P ?= $(PM)
 boot:
-ifneq ($(P), 1)
-	@make defboot
-else
-	@make pmboot
-endif
+	@make $(if $P, pmboot, defboot)
 
 clean:
-	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.sym boot.img pmboot.img
+	@rm -rf quickload.bin boot.o boot.elf boot.bin boot.sym boot.img
 
 distclean: clean
 	@rm -rf boot.S

@@ -1,8 +1,6 @@
 #!/bin/bash
 
-[ -z "$1" ] && exit -1
-
-image="$1".img
+image=boot.img
 
 [ -n "$D" -a "$D" == "1" ] && DEBUG="-s -S"
 [ -n "$G" -a "$G" == "0" ] && CURSES=-curses
