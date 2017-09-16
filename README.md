@@ -14,7 +14,6 @@
 
     $ cd cloud-lab/ && tools/docker/choose cs630-qemu-lab
 
-    $ tools/docker/pull         # Pull from docker hub
     $ tools/docker/run
 
 Login the noVNC website with the printed password and launch the lab via the
@@ -56,12 +55,7 @@ make, exit with 'ESC' + '2' to Qemu monitor console and the 'quit' command.
 Or with `SRC` to configure together:
 
     $ make boot SRC=src/rtc.s
-    $ make pmboot SRC=res/rtcdemo.s // make boot PM=1 SRC=res/rtcdemo.s
-
-Or
-
-    $ make boot S=src/rtc.s
-    $ make pmboot S=res/rtcdemo.s
+    $ make boot SRC=res/rtcdemo.s
 
 To debug with it:
 
@@ -83,11 +77,11 @@ Modify `.gdbinit` to customize your own auto-load gdb scripts.
 
 - helloworld
 
-        $ make pmboot SRC=src/pmhello.s
+        $ make boot SRC=src/pmhello.s
 
 - rtc
 
-        $ make pmboot SRC=src/pmrtc.s
+        $ make boot SRC=src/pmrtc.s
 
 ## NOTES
 
