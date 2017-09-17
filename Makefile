@@ -7,14 +7,11 @@ CC_FLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstr
 OBJCOPY   = objcopy
 OBJCOPY_FLAGS = -R .pdr -R .comment -R.note -S -O binary
 
-LD_FLAGS += -r
+LD_FLAGS +=
 
 MEM      ?= 129M
 BOOT_ENTRY= main
-LOAD_ENTRY= start
-LOAD_ADDR = 0x1000
 BOOT_ADDR = 0x7C00
-_LOAD_ADDR= 0x07C0
 
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
@@ -25,7 +22,13 @@ CONFIGURE = $(TOP_DIR)/configure
 IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
-DD_SEEK   = 1
+LOAD_ADDR = 0
+_LOAD_ADDR= 0x1000
+_BOOT_ADDR= 0x07C0
+
+LOAD_ENTRY?= start
+LOAD_ADDR ?= $(BOOT_ADDR)
+DD_SEEK   ?= 1
 
 all: clean boot.img
 
@@ -38,13 +41,13 @@ config: $(DEF_SRC) $(SRC)
 	@$(if $(SRC), $(CONFIGURE) $(SRC))
 
 boot.bin: config
-	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
+	@sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" boot.S
 	@$(AS) $(AS_FLAGS) -o boot.o boot.S
-	@$(LD) $(LD_FLAGS) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
+	@$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	@$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 
 quickload.bin:
-	@$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(LOAD_ADDR) $(QUICKLOAD) -o quickload.o
+	@$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
 	@$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
 	@$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
 
@@ -60,9 +63,6 @@ gdbinit:
 	@echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
 
 debug: gdbinit
-ifeq ($(findstring boot.elf,$(DST)),boot.elf)
-	@-patch -s -r- -N -l -p1 < $(DEBUG_PATCH)
-endif
 	@$(XTERM_CMD) &
 	@make -s boot D=1
 
