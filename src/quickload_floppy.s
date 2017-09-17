@@ -44,7 +44,7 @@ main:
 	mov     %ax, %es
 	mov     $0, %bx
         mov     $1, %ax
-	mov     $0x80, %cl
+	mov     $72, %cl
 	call    ReadSector
 
 	# verify that our program's signature-word is present

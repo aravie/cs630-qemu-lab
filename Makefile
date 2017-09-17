@@ -21,6 +21,8 @@ DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
 CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
+TOOL_DIR  = ${TOP_DIR}/tools/
+
 ifeq ($(IMAGE),)
   IMAGE = $(TOP_DIR)/boot.img
   BUILD = clean boot.img
@@ -70,7 +72,7 @@ boot.bin: config
 	$(Q)$(AS) $(AS_FLAGS) -o boot.o boot.S
 	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
-	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
+	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=72
 
 quickload.bin:
 	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
@@ -98,8 +100,26 @@ ifeq ($G,0)
    CURSES=-curses
 endif
 
+QEMU_PATH =
+QEMU_PREBUILT ?= 1
+QEMU_PREBUILT_PATH= $(TOOL_DIR)/qemu/
+QEMU  = qemu-system-i386
+
+ifeq ($(QEMU_PREBUILT), 1)
+  QEMU_PATH = $(QEMU_PREBUILT_PATH)
+  QEMU_OPTS = -no-kqemu
+endif
+
+QEMU_CMD = $(QEMU) -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
+ifeq ($(QEMU_PREBUILT),1)
+  QEMU_STATUS = $(shell $(QEMU_PATH)/$(QEMU) --help >/dev/null 2>&1; echo $$?)
+  ifeq ($(QEMU_STATUS), 0)
+    QEMU_CMD := $(QEMU_PATH)/$(QEMU_CMD) $(QEMU_OPTS) -L $(QEMU_PATH)
+  endif
+endif
+
 boot: $(BUILD)
-	qemu-system-i386 -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
+	$(QEMU_CMD)
 
 pmboot: boot
 
