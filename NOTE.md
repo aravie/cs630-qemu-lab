@@ -22,8 +22,8 @@
 - hello.s + try32bit.s:
 
         $ make SRC=res/try32bit.s
-        $ dd if=res/hello.o of=pmboot.img seek=13
-        $ make pmboot
+        $ dd if=res/hello.o of=boot.img seek=13
+        $ make boot
 
 ### Compile loadmap.cpp in gentoo 64bit
 
