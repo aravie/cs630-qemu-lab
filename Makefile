@@ -14,7 +14,7 @@ BOOT_ENTRY= main
 BOOT_ADDR = 0x7C00
 
 TOP_DIR   = $(CURDIR)
-LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
+LDFILE   ?= $(TOP_DIR)/src/quikload_floppy.ld
 QUICKLOAD = $(TOP_DIR)/src/quikload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
@@ -74,9 +74,9 @@ boot.bin: config
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 	$(Q)dd if=boot.bin of=$(IMAGE) status=none seek=$(DD_SEEK) bs=512 count=72
 
-quikload.bin:
-	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quikload.o
-	$(Q)$(LD) $(LD_FLAGS) quikload.o -o quikload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
+quikload.bin: $(QUICKLOAD)
+	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $< -o quikload.o
+	$(Q)$(LD) $(LD_FLAGS) -r quikload.o -o quikload.elf -T $(LDFILE)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quikload.elf quikload.bin
 	$(Q)dd if=quikload.bin status=none of=$(IMAGE) bs=512 count=1
 
