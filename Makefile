@@ -72,13 +72,13 @@ boot.bin: config
 	$(Q)$(AS) $(AS_FLAGS) -o boot.o boot.S
 	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
-	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=72
+	$(Q)dd if=boot.bin of=$(IMAGE) status=none seek=$(DD_SEEK) bs=512 count=72
 
 quickload.bin:
 	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
 	$(Q)$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
-	$(Q)dd if=quickload.bin of=$(IMAGE) bs=512 count=1
+	$(Q)dd if=quickload.bin status=none of=$(IMAGE) bs=512 count=1
 
 update:
 	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
