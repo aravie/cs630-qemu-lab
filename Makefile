@@ -128,7 +128,7 @@ QEMU  = qemu-system-i386
 
 ifeq ($(QEMU_PREBUILT), 1)
   QEMU_PATH = $(QEMU_PREBUILT_PATH)
-  QEMU_OPTS = -no-kqemu
+  QEMU_XOPTS = -no-kqemu -L $(QEMU_PATH)
 endif
 
 ifeq ($(BOOT_DEV), hd)
@@ -138,14 +138,17 @@ else
   BOOT_FLAGS = -fda $(IMAGE) -boot a
 endif
 
-QEMU_CMD = $(QEMU) -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES) $(DEBUG)
+QEMU_CMD  = $(QEMU)
+QEMU_OPTS = -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES) $(DEBUG)
 
 ifeq ($(QEMU_PREBUILT),1)
   QEMU_STATUS = $(shell $(QEMU_PATH)/$(QEMU) --help >/dev/null 2>&1; echo $$?)
   ifeq ($(QEMU_STATUS), 0)
-    QEMU_CMD := $(QEMU_PATH)/$(QEMU_CMD) $(QEMU_OPTS) -L $(QEMU_PATH)
+    QEMU_CMD := $(QEMU_PATH)/$(QEMU) $(QEMU_XOPTS)
   endif
 endif
+
+QEMU_CMD += $(QEMU_OPTS)
 
 boot: src $(BUILD)
 	$(QEMU_CMD)
