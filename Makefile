@@ -68,11 +68,20 @@ else
   Q ?= @
 endif
 
+SRC_CFG := ${TOP_DIR}/.src.cfg
+ifeq ($(SRC),)
+  CFG = $(shell cat $(SRC_CFG) 2>/dev/null)
+  ifeq ($(CFG),)
+    SRC = $(DEF_SRC)
+  else
+    SRC = $(CFG)
+  endif
+endif
+
 all: clean boot.img
+	$(Q)$(if $(SRC), echo $(SRC) > $(SRC_CFG))
 
 boot.img: $(LOADER) boot.bin
-
-SRC ?= $(DEF_SRC)
 
 boot.bin: $(SRC)
 	$(Q)sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" $<
@@ -144,7 +153,7 @@ clean:
 	$(Q)rm -rf *.bin *.elf *.o $(IMAGE)
 
 distclean: clean
-	$(Q)rm -rf boot.S
+	$(Q)rm -rf $(SRC_CFG)
 
 
 note:

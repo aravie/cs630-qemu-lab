@@ -1,8 +1,8 @@
-boot.S
 *.o
 *.bin
 *.elf
 *.img
 *.rej
 *.orig
+*.cfg
 .lab*
