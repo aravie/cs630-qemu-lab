@@ -22,6 +22,10 @@ CONFIGURE = $(TOP_DIR)/configure
 IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
+ifeq ($(RAW), 1)
+  DST = ${TOP_DIR}/boot.elf
+endif
+
 ifeq ($(findstring boot.elf,$(DST)),boot.elf)
   RAW = 1
 endif
@@ -31,6 +35,7 @@ ifeq ($(RAW), 1)
 else
   LOAD_ADDR  = 0
   _LOAD_ADDR = 0x1000
+  LOADER = quickload.bin
 endif
 
 _BOOT_ADDR= 0x07C0
@@ -50,9 +55,7 @@ endif
 
 all: clean boot.img
 
-boot.img: boot.bin quickload.bin
-	$(Q)dd if=quickload.bin of=$(IMAGE) bs=512 count=1
-	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
+boot.img: $(LOADER) boot.bin
 
 config: $(DEF_SRC) $(SRC)
 	$(Q)if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
@@ -63,11 +66,13 @@ boot.bin: config
 	$(Q)$(AS) $(AS_FLAGS) -o boot.o boot.S
 	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
+	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
 
 quickload.bin:
 	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
 	$(Q)$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
+	$(Q)dd if=quickload.bin of=$(IMAGE) bs=512 count=1
 
 update:
 	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
