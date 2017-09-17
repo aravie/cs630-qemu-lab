@@ -43,7 +43,7 @@ main:
 
 	mov     $0x0080, %dx            # drive 0, head 0
         mov     $0x0002, %cx            # sector 2, track 0
-        .equ    AX, 0x0200+5
+        .equ    AX, 0x0200+SYS_SIZE
         mov     $AX, %ax                # service 2, nr of sectors
         int     $0x13
 
