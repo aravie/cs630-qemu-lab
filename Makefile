@@ -78,8 +78,10 @@ ifeq ($(SRC),)
   endif
 endif
 
-all: clean boot.img
-	$(Q)$(if $(SRC), echo $(SRC) > $(SRC_CFG))
+all: src clean boot.img
+
+src: $(SRC) FORCE
+	$(Q)echo $(SRC) > $(SRC_CFG)
 
 boot.img: $(LOADER) boot.bin
 
@@ -109,7 +111,7 @@ XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB
 gdbinit:
 	$(Q)echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
 
-debug: gdbinit
+debug: src gdbinit
 	$(Q)$(XTERM_CMD) &
 	$(Q)make $(S) boot D=1
 
@@ -144,7 +146,7 @@ ifeq ($(QEMU_PREBUILT),1)
   endif
 endif
 
-boot: $(BUILD)
+boot: src $(BUILD)
 	$(QEMU_CMD)
 
 pmboot: boot
@@ -158,6 +160,8 @@ distclean: clean
 
 note:
 	$(Q)cat NOTE.md
+
+FORCE:;
 
 help:
 	@echo "--------------------Assembly Course (CS630) Lab---------------------"
