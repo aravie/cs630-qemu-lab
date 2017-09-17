@@ -36,29 +36,37 @@ _LOAD_ADDR?= $(_BOOT_ADDR)
 LOAD_ADDR ?= $(BOOT_ADDR)
 DD_SEEK   ?= 1
 
+ifeq ($V, 1)
+  Q =
+  S =
+else
+  S ?= -s
+  Q ?= @
+endif
+
 all: clean boot.img
 
 boot.img: boot.bin quickload.bin
-	@dd if=quickload.bin of=$(IMAGE) bs=512 count=1
-	@dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
+	$(Q)dd if=quickload.bin of=$(IMAGE) bs=512 count=1
+	$(Q)dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
 
 config: $(DEF_SRC) $(SRC)
-	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
-	@$(if $(SRC), $(CONFIGURE) $(SRC))
+	$(Q)if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
+	$(Q)$(if $(SRC), $(CONFIGURE) $(SRC))
 
 boot.bin: config
-	@sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" boot.S
-	@$(AS) $(AS_FLAGS) -o boot.o boot.S
-	@$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
-	@$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
+	$(Q)sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" boot.S
+	$(Q)$(AS) $(AS_FLAGS) -o boot.o boot.S
+	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
+	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 
 quickload.bin:
-	@$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
-	@$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
-	@$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
+	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
+	$(Q)$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
+	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
 
 update:
-	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
+	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
 DST ?= $(TOP_DIR)/quickload.elf
@@ -66,11 +74,11 @@ GDB_CMD ?= gdb --quiet $(DST)
 XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
 
 gdbinit:
-	@echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
+	$(Q)echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
 
 debug: gdbinit
-	@$(XTERM_CMD) &
-	@make -s boot D=1
+	$(Q)$(XTERM_CMD) &
+	$(Q)make -s boot D=1
 
 DEBUG = $(if $D, -s -S)
 ifeq ($G,0)
@@ -83,14 +91,14 @@ boot: clean boot.img
 pmboot: boot
 
 clean:
-	@rm -rf *.bin *.elf *.o $(IMAGE)
+	$(Q)rm -rf *.bin *.elf *.o $(IMAGE)
 
 distclean: clean
-	@rm -rf boot.S
+	$(Q)rm -rf boot.S
 
 
 note:
-	@cat NOTE.md
+	$(Q)cat NOTE.md
 
 help:
 	@echo "--------------------Assembly Course (CS630) Lab---------------------"
