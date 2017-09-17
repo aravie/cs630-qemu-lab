@@ -15,7 +15,7 @@ BOOT_ADDR = 0x7C00
 
 TOP_DIR   = $(CURDIR)
 LDFILE    = $(TOP_DIR)/src/bootloader_x86.ld
-QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
+QUICKLOAD = $(TOP_DIR)/src/quikload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
 CONFIGURE = $(TOP_DIR)/configure
@@ -41,7 +41,7 @@ ifeq ($(RAW), 1)
 else
   LOAD_ADDR  = 0
   _LOAD_ADDR = 0x1000
-  LOADER = quickload.bin
+  LOADER = quikload.bin
 endif
 
 _BOOT_ADDR= 0x07C0
@@ -74,17 +74,17 @@ boot.bin: config
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 	$(Q)dd if=boot.bin of=$(IMAGE) status=none seek=$(DD_SEEK) bs=512 count=72
 
-quickload.bin:
-	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quickload.o
-	$(Q)$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
-	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
-	$(Q)dd if=quickload.bin status=none of=$(IMAGE) bs=512 count=1
+quikload.bin:
+	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $(QUICKLOAD) -o quikload.o
+	$(Q)$(LD) $(LD_FLAGS) quikload.o -o quikload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
+	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quikload.elf quikload.bin
+	$(Q)dd if=quikload.bin status=none of=$(IMAGE) bs=512 count=1
 
 update:
 	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
-DST ?= $(TOP_DIR)/quickload.elf
+DST ?= $(TOP_DIR)/quikload.elf
 GDB_CMD ?= gdb --quiet $(DST)
 XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
 

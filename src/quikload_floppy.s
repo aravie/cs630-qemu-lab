@@ -52,7 +52,7 @@ main:
 	jne	err
 
 	# transfer control to our program's entry-point
-	lcall	$LOAD_ADDR, $0x0002
+	ljmp	$LOAD_ADDR, $0x0002
 
 fin:	# await keypress, then reboot
 	mov	$0x00, %ah
@@ -63,7 +63,7 @@ err:	# TODO: We ought to display an error-message here
 	#jmp	fin
 
 	# FIXME: allow this loader work for the program without signature
-	lcall	$LOAD_ADDR, $0x0000
+	ljmp	$LOAD_ADDR, $0x0000
 	
     /* ==================================================================
        Routine: ReadSector
