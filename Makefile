@@ -15,11 +15,19 @@ BOOT_ADDR = 0x7C00
 
 TOP_DIR   = $(CURDIR)
 LDFILE   ?= $(TOP_DIR)/src/quikload_floppy.ld
-QUICKLOAD = $(TOP_DIR)/src/quikload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
 CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
+
+QUIKLOAD_FD = $(TOP_DIR)/src/quikload_floppy.s
+QUIKLOAD_HD = $(TOP_DIR)/src/quikload_hd.s
+
+ifeq ($(BOOT_DEV), hd)
+  QUIKLOAD ?= $(QUIKLOAD_HD)
+else
+  QUIKLOAD ?= $(QUIKLOAD_FD)
+endif
 
 TOOL_DIR  = ${TOP_DIR}/tools/
 
@@ -74,7 +82,7 @@ boot.bin: config
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 	$(Q)dd if=boot.bin of=$(IMAGE) status=none seek=$(DD_SEEK) bs=512 count=72
 
-quikload.bin: $(QUICKLOAD)
+quikload.bin: $(QUIKLOAD)
 	$(Q)$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(_LOAD_ADDR) $< -o quikload.o
 	$(Q)$(LD) $(LD_FLAGS) -r quikload.o -o quikload.elf -T $(LDFILE)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) quikload.elf quikload.bin
@@ -110,7 +118,15 @@ ifeq ($(QEMU_PREBUILT), 1)
   QEMU_OPTS = -no-kqemu
 endif
 
-QEMU_CMD = $(QEMU) -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
+ifeq ($(BOOT_DEV), hd)
+# BOOT_FLAGS = -fda $(IMAGE) -boot a -hda $(IMAGE)
+  BOOT_FLAGS = -hda $(IMAGE) -boot c
+else
+  BOOT_FLAGS = -fda $(IMAGE) -boot a
+endif
+
+QEMU_CMD = $(QEMU) -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES) $(DEBUG)
+
 ifeq ($(QEMU_PREBUILT),1)
   QEMU_STATUS = $(shell $(QEMU_PATH)/$(QEMU) --help >/dev/null 2>&1; echo $$?)
   ifeq ($(QEMU_STATUS), 0)
