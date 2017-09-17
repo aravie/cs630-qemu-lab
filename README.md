@@ -61,7 +61,7 @@ Notes:
 
 * To debug the real mode example, please replace the 'ljmp $addr $label' instruntion with 'jmp label'
 
-> res/memsize.s: `ljmp $0x07C0, $main` --> `jmp main`
+> res/memsize.s: `ljmp $0x07C0, $main` --> `jmp main`, see `git show 86555`
 
 
 #### **Real mode** exercise

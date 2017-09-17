@@ -19,7 +19,9 @@
 
 	.section	.text
 #-----------------------------------------------------------------
-start:	ljmp	$0x07C0, $main		# renormalize CS and IP
+start:
+	#ljmp	$0x1000, $main		# renormalize CS and IP
+	jmp	main			# renormalize CS and IP
 #-----------------------------------------------------------------
 msg:	.ascii	"\n\r Real-Mode Memory: "	# message legend
 buf:	.ascii	"    0 KB \n\r"			# info to report
