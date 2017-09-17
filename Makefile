@@ -1,7 +1,7 @@
 AS        = as -g --32
 LD        = ld -r -melf_i386
 CC        = gcc -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
-OBJCOPY   = objcopy
+OBJCOPY   = objcopy -R .pdr -R .comment -R.note -S -O binary
 
 MEM      ?= 129M
 BOOT_ENTRY= main
@@ -33,12 +33,12 @@ boot.bin: config
 	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
 	@$(AS) -o boot.o boot.S
 	@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
-	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary boot.elf boot.bin
+	@$(OBJCOPY) boot.elf boot.bin
 
 quickload.bin:
 	@$(AS) --defsym LOAD_ADDR=$(LOAD_ADDR) $(QUICKLOAD) -o quickload.o
 	@$(LD) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
-	@$(OBJCOPY) -R .pdr -R .comment -R.note -S -O binary quickload.elf quickload.bin
+	@$(OBJCOPY) quickload.elf quickload.bin
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
