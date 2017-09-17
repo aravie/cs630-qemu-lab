@@ -1,7 +1,13 @@
-AS        = as -g --32
-LD        = ld -r -melf_i386
-CC        = gcc -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
-OBJCOPY   = objcopy -R .pdr -R .comment -R.note -S -O binary
+AS        = as
+AS_FLAGS  = -g --32
+LD        = ld
+LD_FLAGS  = -melf_i386
+CC        = gcc
+CC_FLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
+OBJCOPY   = objcopy
+OBJCOPY_FLAGS = -R .pdr -R .comment -R.note -S -O binary
+
+LD_FLAGS += -r
 
 MEM      ?= 129M
 BOOT_ENTRY= main
@@ -19,11 +25,13 @@ CONFIGURE = $(TOP_DIR)/configure
 IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
+DD_SEEK   = 1
+
 all: clean boot.img
 
 boot.img: boot.bin quickload.bin
 	@dd if=quickload.bin of=$(IMAGE) bs=512 count=1
-	@dd if=boot.bin of=$(IMAGE) seek=1 bs=512 count=2879
+	@dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=2879
 
 config: $(DEF_SRC) $(SRC)
 	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
@@ -31,14 +39,14 @@ config: $(DEF_SRC) $(SRC)
 
 boot.bin: config
 	@sed -i -e "s%$(_LOAD_ADDR)%$(LOAD_ADDR)%g" boot.S
-	@$(AS) -o boot.o boot.S
-	@$(LD) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
-	@$(OBJCOPY) boot.elf boot.bin
+	@$(AS) $(AS_FLAGS) -o boot.o boot.S
+	@$(LD) $(LD_FLAGS) boot.o -o boot.elf #-Ttext 0 #-e $(LOAD_ENTRY)
+	@$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf boot.bin
 
 quickload.bin:
-	@$(AS) --defsym LOAD_ADDR=$(LOAD_ADDR) $(QUICKLOAD) -o quickload.o
-	@$(LD) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
-	@$(OBJCOPY) quickload.elf quickload.bin
+	@$(AS) $(AS_FLAGS) --defsym LOAD_ADDR=$(LOAD_ADDR) $(QUICKLOAD) -o quickload.o
+	@$(LD) $(LD_FLAGS) quickload.o -o quickload.elf -Ttext $(BOOT_ADDR) -e $(BOOT_ENTRY)
+	@$(OBJCOPY) $(OBJCOPY_FLAGS) quickload.elf quickload.bin
 
 update:
 	@wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
