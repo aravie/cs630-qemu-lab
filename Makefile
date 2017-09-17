@@ -66,6 +66,7 @@ ifeq ($V, 1)
 else
   S ?= -s
   Q ?= @
+  LD_FALGS += 2>/dev/null
 endif
 
 SRC_CFG := ${TOP_DIR}/.src.cfg
