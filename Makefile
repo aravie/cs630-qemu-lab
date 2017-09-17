@@ -155,6 +155,10 @@ boot: src $(BUILD)
 
 pmboot: boot
 
+boot-hd:
+	$(Q) make boot BOOT_DEV=hd
+hd-boot: boot-hd
+
 clean:
 	$(Q)rm -rf *.bin *.elf *.o $(IMAGE)
 
