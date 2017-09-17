@@ -102,7 +102,7 @@ gdbinit:
 
 debug: gdbinit
 	$(Q)$(XTERM_CMD) &
-	$(Q)make -s boot D=1
+	$(Q)make $(S) boot D=1
 
 DEBUG = $(if $D, -s -S)
 ifeq ($G,0)
