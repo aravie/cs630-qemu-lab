@@ -23,6 +23,10 @@ IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 ifeq ($(findstring boot.elf,$(DST)),boot.elf)
+  RAW = 1
+endif
+
+ifeq ($(RAW), 1)
   DD_SEEK    = 0
 else
   LOAD_ADDR  = 0
