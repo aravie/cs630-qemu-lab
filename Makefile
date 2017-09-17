@@ -22,11 +22,17 @@ CONFIGURE = $(TOP_DIR)/configure
 IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
-LOAD_ADDR = 0
-_LOAD_ADDR= 0x1000
+ifeq ($(findstring boot.elf,$(DST)),boot.elf)
+  DD_SEEK     = 0
+else
+  LOAD_ADDR  = 0
+  _LOAD_ADDR = 0x1000
+endif
+
 _BOOT_ADDR= 0x07C0
 
 LOAD_ENTRY?= start
+_LOAD_ADDR?= $(_BOOT_ADDR)
 LOAD_ADDR ?= $(BOOT_ADDR)
 DD_SEEK   ?= 1
 

@@ -1,9 +1,6 @@
-	.equ   seg_code, 0x07C0
+	.global start
 .code16			#使用16位模式汇编(GAS 默认认为 .S 文件是 pure 32-bits i386 code)
 .text			#代码段开始(为 link script 做定位)
-	ljmp   $seg_code, $start
-	unit:.byte 9,8,7,6,4,2,0
-	rtc:.ascii "00","/","00","/","00","-","00","-","00",":","00",":","00"
 start:
         mov    %cs, %ax
         mov    %ax, %ds
@@ -70,6 +67,8 @@ saveTime:
 	inc %di
 	mov %al, (%di)
 	ret
-
+.data
+	unit:.byte 9,8,7,6,4,2,0
+	rtc:.ascii "00","/","00","/","00","-","00","-","00",":","00",":","00"
 .org 510            # 填充到 510 字节，使生成的二进制代码恰好为512字节
 .word 0xaa55        # 结束标志

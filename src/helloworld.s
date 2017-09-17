@@ -1,7 +1,6 @@
-	.equ   seg_code, 0x07C0	# 结合ljmp, 指定代码的加载位置，当然，也可以在外面指定
+	.global start
 .code16          		#使用16位模式汇编(GAS 默认认为 .S 文件是 pure 32-bits i386 code)
 .text            		#代码段开始(为 link script 做定位)
-	ljmp   $seg_code, $start
 start:
         mov    %cs, %ax
         mov    %ax, %ds
