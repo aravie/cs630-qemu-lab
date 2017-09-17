@@ -31,7 +31,7 @@ all: clean boot.img
 
 boot.img: boot.bin quickload.bin
 	@dd if=quickload.bin of=$(IMAGE) bs=512 count=1
-	@dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=2879
+	@dd if=boot.bin of=$(IMAGE) seek=$(DD_SEEK) bs=512 count=128
 
 config: $(DEF_SRC) $(SRC)
 	@if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
