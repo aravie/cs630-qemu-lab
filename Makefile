@@ -19,8 +19,12 @@ QUICKLOAD = $(TOP_DIR)/src/quickload_floppy.s
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
 CONFIGURE = $(TOP_DIR)/configure
-IMAGE    ?= $(TOP_DIR)/boot.img
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
+
+ifeq ($(IMAGE),)
+  IMAGE = $(TOP_DIR)/boot.img
+  BUILD = clean boot.img
+endif
 
 ifeq ($(RAW), 1)
   DST = ${TOP_DIR}/boot.elf
@@ -94,7 +98,7 @@ ifeq ($G,0)
    CURSES=-curses
 endif
 
-boot: clean boot.img
+boot: $(BUILD)
 	qemu-system-i386 -M pc -m $(MEM) -fda $(IMAGE) -boot a $(CURSES) $(DEBUG)
 
 pmboot: boot
