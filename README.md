@@ -31,17 +31,6 @@ Bascially, please type:
 
     $ make help
 
-### Configure a source
-
-For example, to compile the src/helloworld.s, configure it with:
-
-    $ ./configure src/helloworld.s
-
-To compile the assembly files from res/, use rtcdemo.s as an example, just
-type:
-
-    $ ./configure res/rtcdemo.s
-
 ### Compile and Boot
 
 Some examples can be compiled for **Real mode**, some others need to be
@@ -52,7 +41,7 @@ make, exit with 'ESC' + '2' to Qemu monitor console and the 'quit' command.
 
     $ make boot G=0
 
-Or with `SRC` to configure together:
+By default, `src/rtc.s` is compiled and boot, Or use `SRC` to specify one:
 
     $ make boot SRC=src/rtc.s
     $ make boot SRC=res/rtcdemo.s

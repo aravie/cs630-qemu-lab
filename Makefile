@@ -17,7 +17,6 @@ TOP_DIR   = $(CURDIR)
 LDFILE   ?= $(TOP_DIR)/src/quikload_floppy.ld
 DEF_SRC   = $(TOP_DIR)/src/rtc.s
 DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
-CONFIGURE = $(TOP_DIR)/configure
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 QUIKLOAD_FD = $(TOP_DIR)/src/quikload_floppy.s
@@ -73,11 +72,9 @@ all: clean boot.img
 
 boot.img: $(LOADER) boot.bin
 
-config: $(DEF_SRC) $(SRC)
-	$(Q)if [ ! -f $(TOP_DIR)/boot.S ]; then $(CONFIGURE) $(DEF_SRC); fi
-	$(Q)$(if $(SRC), $(CONFIGURE) $(SRC))
+SRC ?= $(DEF_SRC)
 
-boot.bin: boot.S config
+boot.bin: $(SRC)
 	$(Q)sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" $<
 	$(Q)$(AS) $(AS_FLAGS) -o boot.o $<
 	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
@@ -162,10 +159,7 @@ help:
 	@echo ""
 	@echo "    :: Configuration ::"
 	@echo ""
-	@echo "    ./configure src/helloworld.s -- configure the source want to compile"
-	@echo "    ./configure src/pmhello.s    -- configure the hello with protected mode"
-	@echo "    ./configure src/rtc.s        -- configure the sources with real mode"
-	@echo "    ./configure src/pmrtc.s      -- configure the sources with protected mode"
+	@echo "    make SRC=src/pmrtc.s         -- configure the sources with protected mode"
 	@echo ""
 	@echo "    :: Compile and Boot ::"
 	@echo ""

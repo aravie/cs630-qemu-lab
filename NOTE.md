@@ -21,8 +21,7 @@
 
 - hello.s + try32bit.s:
 
-        $ ./configure res/try32bit.s
-        $ make
+        $ make SRC=res/try32bit.s
         $ dd if=res/hello.o of=pmboot.img seek=13
         $ make pmboot
 
