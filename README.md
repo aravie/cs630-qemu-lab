@@ -66,8 +66,14 @@ To debug with it:
 
 Modify `.gdbinit` to customize your own auto-load gdb scripts.
 
-Note: due to linking issue, debug not work with protected mode assembly
-currently, need to be fixed up later.
+Notes:
+
+* Due to linking issue, debug not work with protected mode assembly currently, need to be fixed up later.
+
+* To debug the real mode example, please replace the 'ljmp $addr $label' instruntion with 'jmp label'
+
+> res/memsize.s: `ljmp $0x07C0, $main` --> `jmp main`
+
 
 #### **Real mode** exercise
 
