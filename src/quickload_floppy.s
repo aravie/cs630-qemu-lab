@@ -48,11 +48,11 @@ main:
 	call    ReadSector
 
 	# verify that our program's signature-word is present
-	#cmpw	$0xABCD, %es:0
-	#jne	err
+	cmpw	$0xABCD, %es:0
+	jne	err
 
 	# transfer control to our program's entry-point
-	lcall	$LOAD_ADDR, $0x0000
+	lcall	$LOAD_ADDR, $0x0002
 
 fin:	# await keypress, then reboot
 	mov	$0x00, %ah
@@ -60,7 +60,10 @@ fin:	# await keypress, then reboot
 	int	$0x19
 
 err:	# TODO: We ought to display an error-message here
-	jmp	fin
+	#jmp	fin
+
+	# FIXME: allow this loader work for the program without signature
+	lcall	$LOAD_ADDR, $0x0000
 	
     /* ==================================================================
        Routine: ReadSector
