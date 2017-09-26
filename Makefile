@@ -13,14 +13,13 @@ MEM      ?= 129M
 BOOT_ENTRY= main
 BOOT_ADDR = 0x7C00
 
-TOP_DIR   = $(CURDIR)
-LDFILE   ?= $(TOP_DIR)/src/quikload_floppy.ld
-DEF_SRC   = $(TOP_DIR)/src/rtc.s
-DEBUG_PATCH=$(TOP_DIR)/src/debug.patch
+LDFILE   ?= src/quikload_floppy.ld
+DEF_SRC   = src/rtc.s
+DEBUG_PATCH=src/debug.patch
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
-QUIKLOAD_FD = $(TOP_DIR)/src/quikload_floppy.s
-QUIKLOAD_HD = $(TOP_DIR)/src/quikload_hd.s
+QUIKLOAD_FD = src/quikload_floppy.s
+QUIKLOAD_HD = src/quikload_hd.s
 
 ifeq ($(BOOT_DEV), hd)
   QUIKLOAD ?= $(QUIKLOAD_HD)
@@ -30,15 +29,13 @@ else
   SYS_SIZE ?= 72
 endif
 
-TOOL_DIR  = ${TOP_DIR}/tools/
-
 ifeq ($(IMAGE),)
-  IMAGE = $(TOP_DIR)/boot.img
+  IMAGE = boot.img
   BUILD = clean boot.img
 endif
 
 ifeq ($(RAW), 1)
-  DST = ${TOP_DIR}/boot.elf
+  DST = boot.elf
 endif
 
 ifeq ($(findstring boot.elf,$(DST)),boot.elf)
@@ -69,7 +66,7 @@ else
   LD_FALGS += 2>/dev/null
 endif
 
-SRC_CFG := ${TOP_DIR}/.src.cfg
+SRC_CFG := .src.cfg
 ifeq ($(SRC),)
   CFG = $(shell cat $(SRC_CFG) 2>/dev/null)
   ifeq ($(CFG),)
@@ -105,12 +102,12 @@ update:
 	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
-DST ?= $(TOP_DIR)/quikload.elf
+DST ?= quikload.elf
 GDB_CMD ?= gdb --quiet $(DST)
-XTERM_CMD ?= lxterminal --working-directory=$(TOP_DIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
+XTERM_CMD ?= lxterminal --working-directory=$(CURDIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
 
 gdbinit:
-	$(Q)echo "add-auto-load-safe-path $(TOP_DIR)/.gdbinit" > $(HOME)/.gdbinit
+	$(Q)echo "add-auto-load-safe-path .gdbinit" > $(HOME)/.gdbinit
 
 debug: src gdbinit
 	$(Q)$(XTERM_CMD) &
@@ -123,7 +120,7 @@ endif
 
 QEMU_PATH =
 QEMU_PREBUILT ?= 1
-QEMU_PREBUILT_PATH= $(TOOL_DIR)/qemu/
+QEMU_PREBUILT_PATH= tools/qemu
 QEMU  = qemu-system-i386
 
 ifeq ($(QEMU_PREBUILT), 1)
