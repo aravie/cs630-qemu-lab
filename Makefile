@@ -102,15 +102,23 @@ update:
 	$(Q)wget -c -m -nH -np --cut-dirs=2 -P res/ $(CS630)
 
 # Debugging support
+# Xterm: lxterminal, terminator
+XTERM ?= lxterminal
 DST ?= quikload.elf
 GDB_CMD ?= gdb --quiet $(DST)
-XTERM_CMD ?= lxterminal --working-directory=$(CURDIR) -t "$(GDB_CMD)" -e "$(GDB_CMD)"
+XTERM_CMD ?= $(XTERM) --working-directory=$(CURDIR) -T "$(GDB_CMD)" -e "$(GDB_CMD)"
+XTERM_STATUS = $(shell $(XTERM) --help >/dev/null 2>&1; echo $$?)
+ifeq ($(XTERM_STATUS), 0)
+  DEBUG_CMD = $(XTERM_CMD)
+else
+  DEBUG_CMD = echo "\nLOG: Please run this in another terminal:\n\n    " $(GDB_CMD) "\n"
+endif
 
 gdbinit:
 	$(Q)echo "add-auto-load-safe-path .gdbinit" > $(HOME)/.gdbinit
 
 debug: src gdbinit
-	$(Q)$(XTERM_CMD) &
+	$(Q)$(DEBUG_CMD) &
 	$(Q)make $(S) boot D=1
 
 DEBUG = $(if $D, -s -S)
