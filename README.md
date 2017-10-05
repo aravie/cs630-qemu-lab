@@ -10,6 +10,8 @@
 
 ## Prepare
 
+Use Ubuntu as an example, otherwise, please install docker at first with help from [Docker CE](https://store.docker.com/search?type=edition&offering=community).
+
     $ git clone https://github.com/tinyclub/cloud-lab.git
 
     $ cd cloud-lab/ && tools/docker/choose cs630-qemu-lab
