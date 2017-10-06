@@ -10,7 +10,12 @@
 
 ## Prepare
 
-Use Ubuntu as an example, otherwise, please install docker at first with help from [Docker CE](https://store.docker.com/search?type=edition&offering=community).
+Please install docker at first:
+
+* Linux: [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+* Windows or Mac OS: [Docker Toolbox](https://www.docker.com/docker-toolbox)
+
+Using Ubuntu as example:
 
     $ git clone https://github.com/tinyclub/cloud-lab.git
 
