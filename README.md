@@ -12,8 +12,8 @@
 
 Please install docker at first:
 
-* Linux: [Docker CE](https://store.docker.com/search?type=edition&offering=community)
-* Windows or Mac OS: [Docker Toolbox](https://www.docker.com/docker-toolbox)
+* Linux and Mac OSX: [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+* Windows: [Docker Toolbox](https://www.docker.com/docker-toolbox)
 
 Using Ubuntu as example:
 
