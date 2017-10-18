@@ -103,7 +103,7 @@ update:
 
 # Debugging support
 # Xterm: lxterminal, terminator
-XTERM ?= lxterminal
+XTERM ?= $(shell echo `tools/xterm.sh lxterminal`)
 DST ?= quikload.elf
 GDB_CMD ?= gdb --quiet $(DST)
 XTERM_CMD ?= $(XTERM) --working-directory=$(CURDIR) -T "$(GDB_CMD)" -e "$(GDB_CMD)"
