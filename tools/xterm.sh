@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ppid () { ps -p ${1:-$$} -o ppid=; }
-pcmd () { ps -p ${1:-$$} -o cmd=; }
+pcmd () { ps -p ${1:-$$} -o command=; }
 pppid () { ppid `ppid ${1:-$$}`; }
 ppcmd () { pcmd `pppid ${1:-$$}`; }
 ppppid () { pppid `ppid ${1:-$$}`; }
