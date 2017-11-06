@@ -122,8 +122,14 @@ debug: src gdbinit
 	$(Q)make $(S) boot D=1
 
 DEBUG = $(if $D, -s -S)
+
+# Use curses based window for ssh login
+ifneq ($(SSH_TTY),)
+  G ?= 0
+endif
+
 ifeq ($G,0)
-   CURSES=-curses
+  CURSES=-curses
 endif
 
 QEMU_PATH =
