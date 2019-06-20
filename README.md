@@ -3,7 +3,7 @@
 - Author: Wu Zhangjin/Falcon <wuzhangjin@gmail.com> of [TinyLab.org](http://tinylab.org)
 - Update: 2008-09-16, 2014/03/16, 2016/08/04
 - Home: <http://www.tinylab.org/cs630-qemu-lab/>
-- Repo: <http://github.com/tinyclub/cs630-qemu-lab.git>
+- Repo: <http://gitee.com/tinylab/cs630-qemu-lab.git>
 - CS630: <http://www.cs.usfca.edu/~cruse/cs630f06/>
 
 [![CS630 Qemu Lab Usage](doc/cs630-qemu-pmrtc.png)](http://showdesk.io/2017-03-18-15-21-20-cs630-qemu-lab-usage-00-03-33/)
@@ -53,7 +53,7 @@ For Linux or Mac OSX, please simply choose one directory in `~/Downloads` or `~/
 
 Using Ubuntu as example:
 
-    $ git clone https://github.com/tinyclub/cloud-lab.git
+    $ git clone https://gitee.com/tinylab/cloud-lab.git
 
     $ cd cloud-lab/ && tools/docker/choose cs630-qemu-lab
 
