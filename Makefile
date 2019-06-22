@@ -1,7 +1,7 @@
 AS        = as
 AS_FLAGS  = -g --32
 LD        = ld
-LD_FLAGS  = -melf_i386
+LD_FLAGS  = -melf_i386 -E
 CC        = gcc
 CC_FLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
 OBJCOPY   = objcopy
