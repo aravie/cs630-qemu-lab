@@ -132,15 +132,14 @@ ifeq ($G,0)
   CURSES=-curses
 endif
 
+# Some examples using floppy, which may not work on latest qemu versions
+# but you can force use latest qemu for better performance if not using floppy examples.
+# simply run: QEMU_PREBUILT=0 make boot
+
 QEMU_PATH =
 QEMU_PREBUILT ?= 1
 QEMU_PREBUILT_PATH= tools/qemu
 QEMU  = qemu-system-i386
-
-ifeq ($(QEMU_PREBUILT), 1)
-  QEMU_PATH = $(QEMU_PREBUILT_PATH)
-  QEMU_XOPTS = -no-kqemu -L $(QEMU_PATH)
-endif
 
 ifeq ($(BOOT_DEV), hd)
 # BOOT_FLAGS = -fda $(IMAGE) -boot a -hda $(IMAGE)
@@ -151,6 +150,19 @@ endif
 
 QEMU_CMD  = $(QEMU)
 QEMU_OPTS = -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES) $(DEBUG)
+
+ifeq ($(QEMU_PREBUILT), 1)
+  QEMU_PATH = $(QEMU_PREBUILT_PATH)
+  QEMU_XOPTS = -no-kqemu -L $(QEMU_PATH)
+else
+  QEMU_CMD := sudo $(QEMU_CMD)
+  ifneq ($(D),1)
+    KVM_DEV ?= /dev/kvm
+    ifeq ($(KVM_DEV),$(wildcard $(KVM_DEV)))
+      QEMU_OPTS += -enable-kvm
+    endif
+  endif
+endif
 
 ifeq ($(QEMU_PREBUILT),1)
   QEMU_STATUS = $(shell $(QEMU_PATH)/$(QEMU) --help >/dev/null 2>&1; echo $$?)

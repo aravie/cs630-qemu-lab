@@ -89,6 +89,15 @@ By default, `src/rtc.s` is compiled and boot, Or use `SRC` to specify one:
     $ make boot SRC=src/rtc.s
     $ make boot SRC=res/rtcdemo.s
 
+To boot with latest qemu and better performance (may not work with some floppy examples):
+
+    $ export QEMU_PREBUILT=0
+    $ make boot
+
+To get better performance, you'd better enable cpu virtualization in bios to enable kvm:
+
+    CTRL+ALT+Delete (Reboot your host) --> Delete --> Bios features --> Intel Virtualization Technology
+
 To debug with it:
 
     $ make debug
