@@ -117,11 +117,11 @@ endif
 gdbinit:
 	$(Q)echo "add-auto-load-safe-path .gdbinit" > $(HOME)/.gdbinit
 
-debug: src gdbinit
+debug: src gdbinit $(BUILD)
 	$(Q)$(DEBUG_CMD) &
-	$(Q)make $(S) boot D=1
+	$(QEMU_CMD) $(DEBUG)
 
-DEBUG = $(if $D, -s -S)
+DEBUG = -s -S
 
 # Use curses based window for ssh login
 ifneq ($(SSH_TTY),)
@@ -149,14 +149,14 @@ else
 endif
 
 QEMU_CMD  = $(QEMU)
-QEMU_OPTS = -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES) $(DEBUG)
+QEMU_OPTS = -M pc -m $(MEM) $(BOOT_FLAGS) $(CURSES)
 
 ifeq ($(QEMU_PREBUILT), 1)
   QEMU_PATH = $(QEMU_PREBUILT_PATH)
   QEMU_XOPTS = -no-kqemu -L $(QEMU_PATH)
 else
   QEMU_CMD := sudo $(QEMU_CMD)
-  ifneq ($(D),1)
+  ifneq ($(filter debug,$(MAKECMDGOALS)),debug)
     KVM_DEV ?= /dev/kvm
     ifeq ($(KVM_DEV),$(wildcard $(KVM_DEV)))
       QEMU_OPTS += -enable-kvm
