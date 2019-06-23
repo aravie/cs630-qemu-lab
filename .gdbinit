@@ -1,26 +1,27 @@
-python import time; print ("\nWaiting for 2 secs..."); time.sleep(2)
-python print ("Executing gdb commands in local .gdbinit ...")
+shell echo -e "\nWaiting for 2 secs..."
+shell sleep 2
+shell echo -e "Executing gdb commands in local .gdbinit ..."
 
-python print ("\n(gdb) target remote :1234")
+shell echo -e "\ngdb target remote :1234"
 target remote :1234
 
-python import time; time.sleep(1)
-python print ("\n(gdb) break start")
+shell sleep 1
+shell echo -e "\ngdb break start"
 b start
 b _start
 
-python import time; time.sleep(1)
-python print ("\n(gdb) break main")
+shell sleep 1
+shell echo -e "\ngdb break main"
 b main
 
-python import time; time.sleep(1)
-python print ("\n(gdb) continue")
+shell sleep 1
+shell echo -e "\ngdb continue"
 c
 
-python import time; time.sleep(1)
-python print ("\n(gdb) backtrace")
+shell sleep 1
+shell echo -e "\ngdb backtrace"
 bt
 
-python import time; time.sleep(1)
-python print ("\n(gdb) list")
+shell sleep 1
+shell echo -e "\ngdb list"
 l
