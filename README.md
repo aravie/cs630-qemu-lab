@@ -8,6 +8,19 @@
 
 [![CS630 Qemu Lab Usage](doc/cs630-qemu-pmrtc.png)](http://showdesk.io/2017-03-18-15-21-20-cs630-qemu-lab-usage-00-03-33/)
 
+## Contents
+
+- [Prepare](#prepare)
+- [Choose a working directory](#choose-a-working-directory)
+- [Install](#install)
+- [Update](#update)
+- [Usage](#usage)
+  - [Compile and Boot](#compile-and-boot)
+    - [**Real mode** exercise](#real-mode-exercise)
+    - [**Protected mode** exercise](#protected-mode-exercise)
+- [NOTES](#notes)
+- [Contact and Sponsor](#contact-and-sponsor)
+
 ## Prepare
 
 Please install docker at first:
@@ -146,3 +159,9 @@ not be put in the first 512bytes of the disk (MBR).
 See more notes from NOTE.md:
 
     $ make note
+
+## Contact and Sponsor
+
+** Contact us and Sponsor via wechat **
+
+![contact-sponsor](doc/contact-sponsor.png)
