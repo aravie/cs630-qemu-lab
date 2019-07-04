@@ -195,7 +195,7 @@ note:
 FORCE:;
 
 help:
-	@echo "--------------------Assembly Course (CS630) Lab---------------------"
+	@echo "--- Assembly Course (CS630) Lab: http://tinylab.org/cs630-qemu-lab ---"
 	@echo ""
 	@echo "    :: Download ::"
 	@echo ""
@@ -220,4 +220,5 @@ help:
 	@echo ""
 	@echo "    make note"
 	@echo ""
-	@echo "--------------------------------------------------------------------"
+	@echo "--- Assembly Course (CS630) Lab: http://tinylab.org/cs630-qemu-lab ---"
+	@echo ""
