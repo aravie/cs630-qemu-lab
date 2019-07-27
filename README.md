@@ -1,3 +1,5 @@
+**Subscribe Wechat**：<br/><img src='doc/tinylab-wechat.jpg' width='110px'/><br/>
+
 # CS630 on Qemu in Ubuntu
 
 - Author: Wu Zhangjin/Falcon <wuzhangjin@gmail.com> of [TinyLab.org](http://tinylab.org)
