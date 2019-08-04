@@ -5,7 +5,9 @@ LD_FLAGS  = -melf_i386 -E
 CC        = gcc
 CC_FLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce
 OBJCOPY   = objcopy
-OBJCOPY_FLAGS = -R .pdr -R .comment -R.note -S -O binary
+OBJCOPY_FLAGS = -R .pdr -R .comment -R .note -S -O binary
+STRIP     = strip
+STRIP_FLAGS = -s
 
 LD_FLAGS +=
 
@@ -14,8 +16,8 @@ BOOT_ENTRY= main
 BOOT_ADDR = 0x7C00
 
 LDFILE   ?= src/quikload_floppy.ld
-DEF_SRC   = src/rtc.s
-DEBUG_PATCH=src/debug.patch
+DEF_SRC  ?= src/rtc.s
+DEF_APP  ?= res/hello.s
 CS630     = http://www.cs.usfca.edu/~cruse/cs630f06/
 
 QUIKLOAD_FD = src/quikload_floppy.s
@@ -38,12 +40,12 @@ ifeq ($(RAW), 1)
   DST = boot.elf
 endif
 
-ifeq ($(findstring boot.elf,$(DST)),boot.elf)
-  RAW = 1
-endif
+#ifeq ($(findstring boot.elf,$(DST)),boot.elf)
+#  RAW = 1
+#endif
 
 ifeq ($(RAW), 1)
-  DD_SEEK    = 0
+  DD_BOOT_SEEK    = 0
 else
   LOAD_ADDR  = 0
   _LOAD_ADDR = 0x1000
@@ -55,7 +57,7 @@ _BOOT_ADDR= 0x07C0
 LOAD_ENTRY?= start
 _LOAD_ADDR?= $(_BOOT_ADDR)
 LOAD_ADDR ?= $(BOOT_ADDR)
-DD_SEEK   ?= 1
+DD_BOOT_SEEK   ?= 1
 
 ifeq ($V, 1)
   Q =
@@ -76,19 +78,40 @@ ifeq ($(SRC),)
   endif
 endif
 
+APP_CFG := .app.cfg
+ifeq ($(APP),)
+  _CFG = $(shell cat $(APP_CFG) 2>/dev/null)
+  ifeq ($(_CFG),)
+    APP = $(DEF_APP)
+  else
+    APP = $(_CFG)
+  endif
+endif
+
+ifneq ($(APP),)
+  DD_APP_SEEK    ?= 13
+  APP_BIN        ?= app.elf
+endif
+
 all: src clean boot.img
 
-src: $(SRC) FORCE
+src: $(SRC) $(APP) FORCE
 	$(Q)echo $(SRC) > $(SRC_CFG)
+	$(Q)echo $(APP) > $(APP_CFG)
 
-boot.img: $(LOADER) boot.bin
+boot.img: $(LOADER) boot.bin $(APP_BIN)
 
 boot.bin: $(SRC)
 	$(Q)sed -i -e "s%$(_BOOT_ADDR)%$(_LOAD_ADDR)%g" $<
 	$(Q)$(AS) $(AS_FLAGS) -o boot.o $<
 	$(Q)$(LD) $(LD_FLAGS) boot.o -o boot.elf -Ttext $(LOAD_ADDR) -e $(LOAD_ENTRY)
 	$(Q)$(OBJCOPY) $(OBJCOPY_FLAGS) boot.elf $@
-	$(Q)dd if=$@ of=$(IMAGE) status=none seek=$(DD_SEEK) bs=512 count=$(SYS_SIZE)
+	$(Q)dd if=$@ of=$(IMAGE) status=none seek=$(DD_BOOT_SEEK) bs=512 count=$(SYS_SIZE)
+
+app.elf: $(APP)
+	$(Q)$(AS) $(AS_FLAGS) -o app.o $<
+	$(Q)$(LD) $(LD_FLAGS) app.o -o app.elf
+	$(Q)dd if=$@ of=$(IMAGE) status=none seek=$(DD_APP_SEEK) conv=notrunc
 
 QUIKLOAD_AS_FLAGS = --defsym LOAD_ADDR=$(_LOAD_ADDR) --defsym SYS_SIZE=$(SYS_SIZE)
 
@@ -120,6 +143,9 @@ gdbinit:
 debug: src gdbinit $(BUILD)
 	$(Q)$(DEBUG_CMD) &
 	$(QEMU_CMD) $(DEBUG)
+
+debug-hd:
+	@make debug BOOT_DEV=hd
 
 DEBUG = -s -S
 
@@ -186,7 +212,7 @@ clean:
 	$(Q)rm -rf *.bin *.elf *.o $(IMAGE)
 
 distclean: clean
-	$(Q)rm -rf $(SRC_CFG)
+	$(Q)rm -rf $(SRC_CFG) $(APP_CFG)
 
 
 note:
