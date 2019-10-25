@@ -151,11 +151,11 @@ DEBUG = -s -S
 
 # Use curses based window for ssh/bash login
 ifneq ($(shell env | grep -q ^XDG; echo $$?), 0)
-  G := 0
+  override G := 0
 endif
 
 ifneq ($(SSH_TTY),)
-  G := 0
+  override G := 0
 endif
 
 ifeq ($G,0)
